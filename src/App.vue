@@ -63,7 +63,6 @@ export default defineComponent({
       }
     },
     async getWorkItems(searchParams: SearchParams) {
-      console.log('searchParams: ', searchParams);
       this.searchParams = searchParams;
       this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(
         this.settings.apiKey,
