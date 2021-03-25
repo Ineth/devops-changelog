@@ -1,5 +1,5 @@
 <template>
-  <Menubar :model="menuItems">
+  <Menubar>
     <template #start>
       <div class="p-formgroup-inline">
         <div class="p-field">
@@ -24,6 +24,13 @@
         />
       </div>
     </template>
+    <template #end>
+      <Button
+        @click="$emit('open-settings')"
+        icon="pi pi-cog"
+        label="Settings"
+      />
+    </template>
   </Menubar>
 </template>
 
@@ -46,24 +53,12 @@ export default defineComponent({
     InputText,
     Button,
   },
-  setup(props, { emit }) {
-    const menuItems = ref([
-      {
-        label: 'Settings',
-        icon: 'pi pi-cog',
-        command: (event: any) => {
-          // event.originalEvent: Browser event
-          // event.item: Menuitem instance
-          emit('open-settings');
-        },
-      },
-    ]);
-
+  setup(props) {
     const searchParams: Ref<SearchParams> = ref(
       props.searchParams as SearchParams
     );
 
-    return { menuItems, searchParams };
+    return { searchParams };
   },
 });
 </script>
