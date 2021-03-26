@@ -42,6 +42,7 @@ const getWorkItemsBulk = async (apiKey: string, workItemIds: number[]) => {
     body: JSON.stringify(body),
   });
 
+  // TODO: create type
   if (response.status === 200) {
     return ((await response.json()) as any).value.map((item: any) => ({
       id: item.id,
@@ -50,6 +51,7 @@ const getWorkItemsBulk = async (apiKey: string, workItemIds: number[]) => {
         'Xerius2020/_workitems/edit'
       ),
       title: item.fields['System.Title'],
+      type: item.fields['System.WorkItemType']
     }));
   }
   return null;

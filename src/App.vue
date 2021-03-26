@@ -14,17 +14,21 @@
     <div class="p-col-12">
       <Menu
         :searchParams="searchParams"
+        :loading="loading"
         @open-settings="settingsVisible = !settingsVisible"
         @search-workitems="getWorkItems($event)"
       />
       <Message v-if="errorMessage" severity="error" :closable="false">{{errorMessage}}</Message>
     </div>
-    <div class="p-col-8" v-if="settingsVisible">
-      <Settings
+    <div class="p-col-12" v-if="settingsVisible">
+      <div class="p-d-flex p-jc-center">
+        <Settings
+        
         :settings="settings"
         @close-settings="settingsVisible = false"
         @save-settings="saveSettings($event)"
-      />
+        />
+      </div>
     </div>
 
     <div class="p-col-12">
@@ -67,8 +71,9 @@ export default defineComponent({
     const settingsVisible = ref(false);
     const workItemList = ref(undefined);
     const errorMessage = ref('');
+    const loading = ref(false);
 
-    return { settings, searchParams, workItemList, settingsVisible, errorMessage };
+    return { settings, searchParams, workItemList, settingsVisible, errorMessage, loading };
   },
   methods: {
     saveSettings(settings: SettingsModel) {
@@ -88,6 +93,7 @@ export default defineComponent({
 
       saveSearchParams(searchParams);
       try {        
+        this.loading = true;
         this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(
           this.settings.apiKey,
           this.searchParams.fromBuildId,
@@ -95,19 +101,11 @@ export default defineComponent({
           );
         } catch (error) {
           this.errorMessage = `Unable to fetch results: ${error}`
+        } finally {
+          this.loading = false;
         }
     },
-  },
-  // mounted() {
-  //   const apiKey = localStorage.getItem('apiKey');
-  //   if (apiKey) {
-  //     this.settings.apiKey = apiKey;
-  //   }
-  //   const searchParams = localStorage.getItem('searchParams');
-  //   if (searchParams) {
-  //     this.searchParams = JSON.parse(searchParams);
-  //   }
-  // },
+  }, 
 });
 </script>
 
@@ -121,7 +119,7 @@ body {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: var(--surface-a);
+  background-color: var(--surface-900);
   font-family: var(--font-family);
   font-weight: 400;
   color: var(--text-color);
