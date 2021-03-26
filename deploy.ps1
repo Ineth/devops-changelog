@@ -1,4 +1,5 @@
 # build
+npx rimraf ./dist
 npm run build
 # navigate into the build output directory
 cd dist
