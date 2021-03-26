@@ -1,20 +1,25 @@
 <template>
-  <DataTable v-if="workItems" :value="workItems">
-    <Column field="id" header="Id" :sortable="true" style="width: 100px">
-      <template #body="slotProps">
-        <a :href="slotProps.data.url" target="_blank">{{
-          slotProps.data.id
-        }}</a>
-      </template>
-    </Column>
-    <Column field="title" header="Title"></Column>
-  </DataTable>
+  <Card v-if="workItems">
+    <template #content>
+      <DataTable :value="workItems">
+        <Column field="id" header="Id" :sortable="true" style="width: 100px">
+          <template #body="slotProps">
+            <a :href="slotProps.data.url" target="_blank">{{
+              slotProps.data.id
+            }}</a>
+          </template>
+        </Column>
+        <Column field="title" header="Title"></Column>
+      </DataTable>
+    </template>
+  </Card>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Card from 'primevue/card';
 
 export default defineComponent({
   name: 'WorkItemTable',
@@ -24,6 +29,7 @@ export default defineComponent({
   components: {
     DataTable,
     Column,
+    Card,
   },
 });
 </script>

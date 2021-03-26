@@ -11,7 +11,7 @@
       <Settings
         :settings="settings"
         @close-settings="settingsVisible = false"
-        @save-settings=""
+        @save-settings="saveSettings($event)"
       />
     </div>
 
@@ -31,6 +31,12 @@ import Card from 'primevue/card';
 import { Settings as SettingsModel } from './models/Settings';
 import devopsApi from './api/devops.api';
 import { SearchParams } from './models/SearchParams';
+import {
+  getSearchParams,
+  getSettings,
+  saveSearchParams,
+  saveSettings,
+} from './api/localstorage.api';
 
 export default defineComponent({
   name: 'App',
@@ -41,29 +47,24 @@ export default defineComponent({
     Card,
   },
   setup: () => {
-    const settings: Ref<SettingsModel> = ref({
-      apiKey: 'a7lpk4hhgbuzvpqehnicwa3hf6hy5wrkn2sel57aphqpjzklgdfq',
-      saveToLocalStorage: false,
-    });
-    const searchParams: Ref<SearchParams> = ref({
-      fromBuildId: '117646',
-      toBuildId: '119288',
-    });
+    const settings: Ref<SettingsModel> = ref(getSettings());
+    const searchParams: Ref<SearchParams> = ref(getSearchParams());
 
     const settingsVisible = ref(false);
-
     const workItemList = ref(undefined);
 
     return { settings, searchParams, workItemList, settingsVisible };
   },
   methods: {
     saveSettings(settings: SettingsModel) {
+      this.settings = settings;
       if (settings.saveToLocalStorage) {
-        localStorage.setItem('apiKey', settings.apiKey);
+        saveSettings(settings);
       }
     },
     async getWorkItems(searchParams: SearchParams) {
       this.searchParams = searchParams;
+      saveSearchParams(searchParams);
       this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(
         this.settings.apiKey,
         this.searchParams.fromBuildId,
@@ -71,11 +72,41 @@ export default defineComponent({
       );
     },
   },
+  // mounted() {
+  //   const apiKey = localStorage.getItem('apiKey');
+  //   if (apiKey) {
+  //     this.settings.apiKey = apiKey;
+  //   }
+  //   const searchParams = localStorage.getItem('searchParams');
+  //   if (searchParams) {
+  //     this.searchParams = JSON.parse(searchParams);
+  //   }
+  // },
 });
 </script>
 
 <style>
 html {
   font-size: 16px;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--surface-a);
+  font-family: var(--font-family);
+  font-weight: 400;
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  margin: 1rem;
 }
 </style>
