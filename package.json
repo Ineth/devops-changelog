@@ -5,7 +5,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "deploy": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command deploy.ps1"
+    "deploy": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./deploy.ps1"
   },
   "dependencies": {
     "base-64": "^1.0.0",
