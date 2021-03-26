@@ -1,11 +1,23 @@
 <template>
   <div class="p-grid">
     <div class="p-col-12">
+      <Card>
+        <template #title>
+          Welcome
+      </template>
+      <template #content>
+        This small tool allows you to see DevOps work items that are included between 2 given build ids. <br>
+        <strong>Note:</strong> Provide your API key in the settings.
+    </template>
+      </Card>
+    </div>
+    <div class="p-col-12">
       <Menu
         :searchParams="searchParams"
         @open-settings="settingsVisible = !settingsVisible"
         @search-workitems="getWorkItems($event)"
       />
+      <Message v-if="errorMessage" severity="error" :closable="false">{{errorMessage}}</Message>
     </div>
     <div class="p-col-8" v-if="settingsVisible">
       <Settings
@@ -24,6 +36,7 @@
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue';
 import Menu from './components/Menu.vue';
+import Message from 'primevue/message';
 import Settings from './components/Settings.vue';
 import WorkItemTable from './components/WorkItemTable.vue';
 import Card from 'primevue/card';
@@ -45,6 +58,7 @@ export default defineComponent({
     Settings,
     WorkItemTable,
     Card,
+    Message
   },
   setup: () => {
     const settings: Ref<SettingsModel> = ref(getSettings());
@@ -52,8 +66,9 @@ export default defineComponent({
 
     const settingsVisible = ref(false);
     const workItemList = ref(undefined);
+    const errorMessage = ref('');
 
-    return { settings, searchParams, workItemList, settingsVisible };
+    return { settings, searchParams, workItemList, settingsVisible, errorMessage };
   },
   methods: {
     saveSettings(settings: SettingsModel) {
@@ -61,15 +76,26 @@ export default defineComponent({
       if (settings.saveToLocalStorage) {
         saveSettings(settings);
       }
+      this.settingsVisible = false;
     },
     async getWorkItems(searchParams: SearchParams) {
+      this.errorMessage = '';
       this.searchParams = searchParams;
+      if(!this.settings.apiKey) {
+        this.errorMessage = 'No API Key provided, please provide one in the settings.'
+        return;
+      }
+
       saveSearchParams(searchParams);
-      this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(
-        this.settings.apiKey,
-        this.searchParams.fromBuildId,
-        this.searchParams.toBuildId
-      );
+      try {        
+        this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(
+          this.settings.apiKey,
+          this.searchParams.fromBuildId,
+          this.searchParams.toBuildId
+          );
+        } catch (error) {
+          this.errorMessage = `Unable to fetch results: ${error}`
+        }
     },
   },
   // mounted() {

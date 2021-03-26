@@ -65,6 +65,9 @@ const getWorkItemsBetweenBuilds = async (
     fromBuildId,
     toBuildId
   );
+  if(workItemIds === null){
+    throw new Error("Failed to fetch work item ids between builds")
+  }
   return await getWorkItemsBulk(apiKey, workItemIds);
 };
 
