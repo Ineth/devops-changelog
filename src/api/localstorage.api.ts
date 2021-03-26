@@ -1,8 +1,21 @@
 import { SearchParams } from '../models/SearchParams';
 import { Settings } from '../models/Settings';
 
+const showWelcomeMessage = 'showWelcomeMessage';
 const searchParamsKey = 'searchParams';
 const settingsKey = 'settings';
+
+export function saveShowWelcomeMessage(value: boolean) {
+  localStorage.setItem(showWelcomeMessage, JSON.stringify(value));
+}
+
+export function getShowWelcomeMessage(): boolean {
+  const value = localStorage.getItem(showWelcomeMessage);
+  if (!value) {
+    return true;
+  }
+  return JSON.parse(value);
+}
 
 export function saveSearchParams(searchParams: SearchParams) {
   localStorage.setItem(searchParamsKey, JSON.stringify(searchParams));
