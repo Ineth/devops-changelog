@@ -1,10 +1,5 @@
 import base64 from 'base-64';
-
-export interface DevopsParams {
-  organization: string,
-  project: string
-  apiKey: string
-}
+import { DevopsSettings } from '../models/Settings';
 
 function createHeaders(apiKey: string) {
   const headers = new Headers();
@@ -13,30 +8,30 @@ function createHeaders(apiKey: string) {
   return headers;
 }
 
-const getBuildById = async (devopsParams:DevopsParams, buildId: string) => {
-  const url = `https://dev.azure.com/${devopsParams.organization}/${devopsParams.project}/_apis/build/builds/${buildId}?api-version=6.1-preview.6`
-  
+const getBuildById = async (devopsParams: DevopsSettings, buildId: string) => {
+  const url = `https://dev.azure.com/${devopsParams.organization}/${devopsParams.project}/_apis/build/builds/${buildId}?api-version=6.1-preview.6`;
+
   const response = await fetch(url, {
     method: 'GET',
     headers: createHeaders(devopsParams.apiKey),
   });
 
   if (response.status === 200) {
-    return ((await response.json()) as any)
+    return (await response.json()) as any;
   }
   return null;
-}
+};
 
 const getWorkItemIdsBetweenBuilds = async (
-  apiKey: string,
+  devopsParams: DevopsSettings,
   fromBuildId: string,
   toBuildId: string
 ) => {
-  const url = `https://dev.azure.com/xeriusit/xerius2020/_apis/build/workitems?fromBuildId=${fromBuildId}&toBuildId=${toBuildId}&$top=100&api-version=6.0-preview.2`;
+  const url = `https://dev.azure.com/${devopsParams.organization}/${devopsParams.project}/_apis/build/workitems?fromBuildId=${fromBuildId}&toBuildId=${toBuildId}&$top=100&api-version=6.0-preview.2`;
 
   const response = await fetch(url, {
     method: 'GET',
-    headers: createHeaders(apiKey),
+    headers: createHeaders(devopsParams.apiKey),
   });
 
   if (response.status === 200) {
@@ -47,9 +42,11 @@ const getWorkItemIdsBetweenBuilds = async (
   return null;
 };
 
-const getWorkItemsBulk = async (apiKey: string, workItemIds: number[]) => {
-  const url =
-    'https://dev.azure.com/xeriusit/xerius2020/_apis/wit/workitemsbatch?api-version=6.0';
+const getWorkItemsBulk = async (
+  devopsParams: DevopsSettings,
+  workItemIds: number[]
+) => {
+  const url = `https://dev.azure.com/${devopsParams.organization}/${devopsParams.project}/_apis/wit/workitemsbatch?api-version=6.0`;
 
   const body = {
     ids: workItemIds,
@@ -58,7 +55,7 @@ const getWorkItemsBulk = async (apiKey: string, workItemIds: number[]) => {
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: createHeaders(apiKey),
+    headers: createHeaders(devopsParams.apiKey),
     body: JSON.stringify(body),
   });
 
@@ -71,26 +68,26 @@ const getWorkItemsBulk = async (apiKey: string, workItemIds: number[]) => {
         'Xerius2020/_workitems/edit'
       ),
       title: item.fields['System.Title'],
-      type: item.fields['System.WorkItemType']
+      type: item.fields['System.WorkItemType'],
     }));
   }
   return null;
 };
 
 const getWorkItemsBetweenBuilds = async (
-  apiKey: string,
+  devopsParams: DevopsSettings,
   fromBuildId: string,
   toBuildId: string
 ) => {
   const workItemIds = await getWorkItemIdsBetweenBuilds(
-    apiKey,
+    devopsParams,
     fromBuildId,
     toBuildId
   );
-  if(workItemIds === null){
-    throw new Error("Failed to fetch work item ids between builds")
+  if (workItemIds === null) {
+    throw new Error('Failed to fetch work item ids between builds');
   }
-  return await getWorkItemsBulk(apiKey, workItemIds);
+  return await getWorkItemsBulk(devopsParams, workItemIds);
 };
 
 export default {

@@ -41,6 +41,8 @@ export function getSettings(): Settings {
   if (!settings) {
     return {
       apiKey: '',
+      organization: 'xeriusit',
+      project: 'xerius2020',
       saveToLocalStorage: false,
     };
   }

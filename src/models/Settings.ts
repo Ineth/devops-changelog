@@ -1,4 +1,9 @@
-export type Settings = {
+export type DevopsSettings = {
   apiKey: string;
-  saveToLocalStorage: boolean;
+  organization: string;
+  project: string;
 };
+
+export type Settings = {
+  saveToLocalStorage: boolean;
+} & DevopsSettings;

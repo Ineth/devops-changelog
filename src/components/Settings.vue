@@ -4,8 +4,19 @@
       <h2>Settings</h2>
     </template>
     <template #content>
-
       <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label for="Organization">Organization</label>
+          <InputText
+            id="Organization"
+            type="text"
+            v-model="settings.organization"
+          />
+        </div>
+        <div class="p-field p-col-12">
+          <label for="Project">Project</label>
+          <InputText id="Project" type="text" v-model="settings.project" />
+        </div>
         <div class="p-field p-col-12">
           <label for="ApiKey">API Key</label>
           <InputText id="ApiKey" type="text" v-model="settings.apiKey" />
@@ -17,19 +28,18 @@
       </div>
     </template>
     <template #footer>
-
       <div class="p-grid p-jc-end">
         <div class="p-col" style="display: flex; justify-content: flex-end">
           <Button
-          class="p-mr-2"
-          label="Cancel"
-          icon="pi"
-          @click="$emit('close-settings')"
+            class="p-mr-2"
+            label="Cancel"
+            icon="pi"
+            @click="$emit('close-settings')"
           />
           <Button
-          label="Save"
-          icon="pi pi-check"
-          @click="$emit('save-settings', settings)"
+            label="Save"
+            icon="pi pi-check"
+            @click="$emit('save-settings', settings)"
           />
         </div>
       </div>
@@ -55,7 +65,7 @@ export default defineComponent({
     InputText,
     Button,
     Checkbox,
-    Card
+    Card,
   },
   setup(props) {
     const settings: Ref<Settings> = ref(props.settings as Settings);
