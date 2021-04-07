@@ -133,19 +133,27 @@ export default defineComponent({
       this.settingsVisible = false;
     },
     async getBuildDetails(buildId: string, from: boolean) {
-      const buildDetails = await devopsApi.getBuildById(this.settings, buildId);
-      const details = {
-        link: buildDetails._links.web.href,
-        buildNumber: buildDetails.buildNumber,
-        pipeline: {
-          name: buildDetails.definition.name,
-          link: buildDetails.definition.url,
-        },
-        repo: {
-          name: buildDetails.repository.name,
-          link: buildDetails.repository.url,
-        },
-      };
+      let details = undefined;
+      try {
+        const buildDetails = await devopsApi.getBuildById(
+          this.settings,
+          buildId
+        );
+        details = {
+          link: buildDetails._links.web.href,
+          buildNumber: buildDetails.buildNumber,
+          pipeline: {
+            name: buildDetails.definition.name,
+            link: buildDetails.definition.url,
+          },
+          repo: {
+            name: buildDetails.repository.name,
+            link: buildDetails.repository.url,
+          },
+        };
+      } catch {
+        details = null;
+      }
 
       if (from) {
         this.fromBuildIdDetails = details;
@@ -201,7 +209,11 @@ body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  color: var(--text-color-secondary);
   margin: 1rem;
+}
+
+a {
+  color: rgb(230, 234, 245);
 }
 </style>
