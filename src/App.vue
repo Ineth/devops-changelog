@@ -111,6 +111,15 @@ export default defineComponent({
       showWelcomeMessage,
     };
   },
+  mounted() {
+    if (this.searchParams?.fromBuildId) {
+      this.getBuildDetails(this.searchParams.fromBuildId, true);
+    }
+
+    if (this.searchParams?.toBuildId) {
+      this.getBuildDetails(this.searchParams.toBuildId, false);
+    }
+  },
   methods: {
     closeWelcomeMessage() {
       this.showWelcomeMessage = false;
@@ -124,14 +133,7 @@ export default defineComponent({
       this.settingsVisible = false;
     },
     async getBuildDetails(buildId: string, from: boolean) {
-      const buildDetails = await devopsApi.getBuildById(
-        {
-          apiKey: this.settings.apiKey,
-          organization: 'xeriusit',
-          project: 'xerius2020',
-        },
-        buildId
-      );
+      const buildDetails = await devopsApi.getBuildById(this.settings, buildId);
       const details = {
         link: buildDetails._links.web.href,
         buildNumber: buildDetails.buildNumber,
@@ -164,7 +166,7 @@ export default defineComponent({
       try {
         this.loading = true;
         this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(
-          this.settings.apiKey,
+          this.settings,
           this.searchParams.fromBuildId,
           this.searchParams.toBuildId
         );
