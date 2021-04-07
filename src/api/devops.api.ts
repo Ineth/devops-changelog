@@ -1,10 +1,30 @@
 import base64 from 'base-64';
 
+export interface DevopsParams {
+  organization: string,
+  project: string
+  apiKey: string
+}
+
 function createHeaders(apiKey: string) {
   const headers = new Headers();
   headers.set('Authorization', 'Basic ' + base64.encode('user :' + apiKey));
   headers.set('Content-Type', 'application/json');
   return headers;
+}
+
+const getBuildById = async (devopsParams:DevopsParams, buildId: string) => {
+  const url = `https://dev.azure.com/${devopsParams.organization}/${devopsParams.project}/_apis/build/builds/${buildId}?api-version=6.1-preview.6`
+  
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: createHeaders(devopsParams.apiKey),
+  });
+
+  if (response.status === 200) {
+    return ((await response.json()) as any)
+  }
+  return null;
 }
 
 const getWorkItemIdsBetweenBuilds = async (
@@ -74,5 +94,6 @@ const getWorkItemsBetweenBuilds = async (
 };
 
 export default {
+  getBuildById,
   getWorkItemsBetweenBuilds,
 };

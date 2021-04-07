@@ -23,17 +23,23 @@
         </template>
       </Card>
     </div>
+
     <div class="p-col-12">
       <Menu
         :searchParams="searchParams"
         :loading="loading"
+        :fromBuildIdDetails="fromBuildIdDetails"
+        :toBuildIdDetails="toBuildIdDetails"
         @open-settings="settingsVisible = !settingsVisible"
         @search-workitems="getWorkItems($event)"
+        @from-build-id-changed="getBuildDetails($event, true)"
+        @to-build-id-changed="getBuildDetails($event, false)"
       />
       <Message v-if="errorMessage" severity="error" :closable="false">{{
         errorMessage
       }}</Message>
     </div>
+
     <div class="p-col-12" v-if="settingsVisible">
       <div class="p-d-flex p-jc-center">
         <Settings
@@ -68,7 +74,7 @@ import {
   getShowWelcomeMessage,
   saveSearchParams,
   saveSettings,
-saveShowWelcomeMessage,
+  saveShowWelcomeMessage,
 } from './api/localstorage.api';
 
 export default defineComponent({
@@ -84,6 +90,8 @@ export default defineComponent({
   setup: () => {
     const settings: Ref<SettingsModel> = ref(getSettings());
     const searchParams: Ref<SearchParams> = ref(getSearchParams());
+    const fromBuildIdDetails: Ref<any> = ref(undefined);
+    const toBuildIdDetails: Ref<any> = ref(undefined);
     const showWelcomeMessage = ref(getShowWelcomeMessage());
 
     const settingsVisible = ref(false);
@@ -94,6 +102,8 @@ export default defineComponent({
     return {
       settings,
       searchParams,
+      fromBuildIdDetails,
+      toBuildIdDetails,
       workItemList,
       settingsVisible,
       errorMessage,
@@ -105,13 +115,41 @@ export default defineComponent({
     closeWelcomeMessage() {
       this.showWelcomeMessage = false;
       saveShowWelcomeMessage(this.showWelcomeMessage);
-    },  
+    },
     saveSettings(settings: SettingsModel) {
       this.settings = settings;
       if (settings.saveToLocalStorage) {
         saveSettings(settings);
       }
       this.settingsVisible = false;
+    },
+    async getBuildDetails(buildId: string, from: boolean) {
+      const buildDetails = await devopsApi.getBuildById(
+        {
+          apiKey: this.settings.apiKey,
+          organization: 'xeriusit',
+          project: 'xerius2020',
+        },
+        buildId
+      );
+      const details = {
+        link: buildDetails._links.web.href,
+        buildNumber: buildDetails.buildNumber,
+        pipeline: {
+          name: buildDetails.definition.name,
+          link: buildDetails.definition.url,
+        },
+        repo: {
+          name: buildDetails.repository.name,
+          link: buildDetails.repository.url,
+        },
+      };
+
+      if (from) {
+        this.fromBuildIdDetails = details;
+      } else {
+        this.toBuildIdDetails = details;
+      }
     },
     async getWorkItems(searchParams: SearchParams) {
       this.errorMessage = '';
