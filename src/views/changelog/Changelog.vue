@@ -1,65 +1,39 @@
 <template>
   <div class="p-grid">
     <div class="p-col-12">
-      <Menu @open-settings="settingsVisible = !settingsVisible" />
+      <SearchBar
+        :searchParams="searchParams"
+        :loading="loading"
+        :fromBuildIdDetails="fromBuildIdDetails"
+        :toBuildIdDetails="toBuildIdDetails"
+        @open-settings="settingsVisible = !settingsVisible"
+        @search-workitems="getWorkItems($event)"
+        @from-build-id-changed="getBuildDetails($event, true)"
+        @to-build-id-changed="getBuildDetails($event, false)"
+      />
       <Message v-if="errorMessage" severity="error" :closable="false">{{
         errorMessage
       }}</Message>
     </div>
 
-    <div v-if="showWelcomeMessage" class="p-col-12">
-      <Card>
-        <template #title> Welcome </template>
-        <template #content>
-          This small tool allows you to see DevOps work items that are included
-          between 2 given build ids.
-          <br />
-          <br />
-          <strong>Note:</strong> Provide your API key in the settings.
-        </template>
-        <template #footer>
-          <div class="p-grid p-jc-end">
-            <div class="p-col" style="display: flex; justify-content: flex-end">
-              <Button
-                label="Ok"
-                icon="pi pi-check"
-                @click="closeWelcomeMessage"
-              />
-            </div>
-          </div>
-        </template>
-      </Card>
-    </div>
-
-    <div class="p-col-12" v-if="settingsVisible">
-      <div class="p-d-flex p-jc-center">
-        <Settings
-          :settings="settings"
-          @close-settings="settingsVisible = false"
-          @save-settings="saveSettings($event)"
-        />
-      </div>
-    </div>
-
     <div class="p-col-12">
-      <Changelog />
+      <!-- <WorkItemTable :work-items="workItemList" /> -->
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue';
-import Menu from './components/Menu.vue';
+// import SearchBar from './components/SearchBar.vue';
 import Message from 'primevue/message';
-import Settings from './components/Settings.vue';
+// import Settings from './components/Settings.vue';
+// import WorkItemTable from './WorkItemTable.vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-import Changelog from './views/changelog/Changelog.vue';
-
-import { Settings as SettingsModel } from './models/Settings';
-import devopsApi from './api/devops.api';
-import { SearchParams } from './models/SearchParams';
+import { Settings as SettingsModel } from '../../models/Settings';
+import devopsApi from '../../api/devops.api';
+import { SearchParams } from '../../models/SearchParams';
 import {
   getSearchParams,
   getSettings,
@@ -67,17 +41,17 @@ import {
   saveSearchParams,
   saveSettings,
   saveShowWelcomeMessage,
-} from './api/localstorage.api';
+} from '../../api/localstorage.api';
 
 export default defineComponent({
-  name: 'App',
+  name: 'Changelog',
   components: {
-    Menu,
-    Settings,
+    // SearchBar,
+    // Settings,
+    // WorkItemTable,
     Card,
     Message,
     Button,
-    Changelog,
   },
   setup: () => {
     const settings: Ref<SettingsModel> = ref(getSettings());
@@ -180,32 +154,4 @@ export default defineComponent({
 });
 </script>
 
-<style>
-html {
-  font-size: 16px;
-}
-
-body {
-  margin: 0;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  background-color: var(--surface-900);
-  font-family: var(--font-family);
-  font-weight: 400;
-  color: var(--text-color);
-  -webkit-font-smoothing: antialiased;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--text-color-secondary);
-  margin: 1rem;
-}
-
-a {
-  color: rgb(230, 234, 245);
-}
-</style>
+<style scoped></style>

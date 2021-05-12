@@ -1,10 +1,9 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import ViteComponents from 'vite-plugin-components';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
-  base: process.env.NODE_ENV === 'production'
-  ? '/devops-changelog/'
-  : '/'
-})
+  plugins: [vue(), ViteComponents()], // TODO: add vite-plugin-components
+  base: process.env.NODE_ENV === 'production' ? '/devops-changelog/' : '/',
+});
