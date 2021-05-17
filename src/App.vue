@@ -31,12 +31,6 @@
       </Card>
     </div>
 
-    <div class="p-col-12" v-if="settingsVisible">
-      <div class="p-d-flex p-jc-center">
-        <Settings @close-settings="settingsVisible = false" />
-      </div>
-    </div>
-
     <div class="p-col-12">
       <router-view></router-view>
     </div>
@@ -49,15 +43,12 @@ import Message from 'primevue/message';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-import { Settings as SettingsModel } from '@/store/models/Settings';
 import devopsApi from './api/devops.api';
 import { SearchParams } from './models/SearchParams';
 import {
   getSearchParams,
-  getSettings,
   getShowWelcomeMessage,
   saveSearchParams,
-  saveSettings,
   saveShowWelcomeMessage,
 } from './api/localstorage.api';
 import { useStore } from './store';

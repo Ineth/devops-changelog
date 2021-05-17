@@ -4,6 +4,4 @@ export type DevopsSettings = {
   project: string;
 };
 
-export type Settings = {
-  saveToLocalStorage: boolean;
-} & DevopsSettings;
+export type Settings = {} & DevopsSettings;

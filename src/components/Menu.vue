@@ -3,16 +3,22 @@
     <template #content>
       <div class="p-d-flex p-jc-between">
         <div class="menu-items">
-          <router-link to="/" class="p-button">Changelog</router-link>
-          <router-link to="/pull-requests" class="p-button"
-            >Pull Requests</router-link
-          >
+          <Button
+            @click="$router.push('/')"
+            label="Changelog"
+            class="p-button-link"
+          /><Button
+            @click="$router.push('/pull-requests')"
+            label="Pull Requests"
+            class="p-button-link"
+          />
         </div>
         <div>
           <Button
-            @click="$emit('open-settings')"
+            @click="$router.push('/settings')"
             icon="pi pi-cog"
             label="Settings"
+            class="p-button-link"
           />
         </div>
       </div>
@@ -48,9 +54,10 @@ export default defineComponent({
   margin-right: 0.5rem;
 }
 
+/* TODO: avtive router link style */
 .router-link-active {
-  background-color: var(--blue-500);
-  border-color: var(--blue-800);
-  box-shadow: none !important;
+  /* background-color: var(--blue-500); */
+  /* border-color: var(--blue-800); */
+  /* box-shadow: 0 0 0 1px #93cbf9 !important; */
 }
 </style>

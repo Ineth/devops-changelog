@@ -21,7 +21,6 @@ export const store = createStore<State>({
       apiKey: '',
       organization: '',
       project: '',
-      saveToLocalStorage: false,
     },
   },
   mutations: {

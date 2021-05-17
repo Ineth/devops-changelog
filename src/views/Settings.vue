@@ -21,21 +21,11 @@
           <label for="ApiKey">API Key</label>
           <InputText id="ApiKey" type="text" v-model="settings.apiKey" />
         </div>
-        <div class="p-field-checkbox p-col-12">
-          <Checkbox v-model="settings.saveToLocalStorage" :binary="true" />
-          <label for="binary">Save in localstorage</label>
-        </div>
       </div>
     </template>
     <template #footer>
       <div class="p-grid p-jc-end">
         <div class="p-col" style="display: flex; justify-content: flex-end">
-          <Button
-            class="p-mr-2"
-            label="Cancel"
-            icon="pi"
-            @click="$emit('close-settings')"
-          />
           <Button label="Save" icon="pi pi-check" @click="saveSettings()" />
         </div>
       </div>
@@ -49,21 +39,19 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Card from 'primevue/card';
+import Dialog from 'primevue/dialog';
 import { Settings } from '@/store/models/Settings';
 import { useStore } from '@/store';
 import { Mutations } from '@/store/mutations.enum';
 
 export default defineComponent({
   name: 'Settings',
-  props: {
-    settings: Object,
-  },
-  emits: ['close-settings', 'save-settings'],
   components: {
     InputText,
     Button,
     Checkbox,
     Card,
+    Dialog,
   },
   setup() {
     const store = useStore();
@@ -73,9 +61,8 @@ export default defineComponent({
   },
   methods: {
     saveSettings() {
-      console.log('saveSettings');
       this.store.commit(Mutations.SET_SETTINGS, this.settings);
-      this.$emit('close-settings');
+      this.$router.push('/');
     },
   },
 });

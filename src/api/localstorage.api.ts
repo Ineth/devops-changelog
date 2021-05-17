@@ -43,7 +43,6 @@ export function getSettings(): Settings {
       apiKey: '',
       organization: 'xeriusit',
       project: 'xerius2020',
-      saveToLocalStorage: false,
     };
   }
   return JSON.parse(settings);
