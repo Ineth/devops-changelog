@@ -17,23 +17,20 @@
     </div>
 
     <div class="p-col-12">
-      <!-- <WorkItemTable :work-items="workItemList" /> -->
+      <WorkItemTable :work-items="workItemList" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue';
-// import SearchBar from './components/SearchBar.vue';
 import Message from 'primevue/message';
-// import Settings from './components/Settings.vue';
-// import WorkItemTable from './WorkItemTable.vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-import { Settings as SettingsModel } from '../../models/Settings';
-import devopsApi from '../../api/devops.api';
-import { SearchParams } from '../../models/SearchParams';
+import { Settings as SettingsModel } from '@/models/Settings';
+import devopsApi from '@/api/devops.api';
+import { SearchParams } from '@/models/SearchParams';
 import {
   getSearchParams,
   getSettings,
@@ -41,14 +38,11 @@ import {
   saveSearchParams,
   saveSettings,
   saveShowWelcomeMessage,
-} from '../../api/localstorage.api';
+} from '@/api/localstorage.api';
 
 export default defineComponent({
   name: 'Changelog',
   components: {
-    // SearchBar,
-    // Settings,
-    // WorkItemTable,
     Card,
     Message,
     Button,

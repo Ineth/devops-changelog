@@ -49,13 +49,9 @@
 
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue';
-import Menu from './components/Menu.vue';
 import Message from 'primevue/message';
-import Settings from './components/Settings.vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
-
-import Changelog from './views/changelog/Changelog.vue';
 
 import { Settings as SettingsModel } from './models/Settings';
 import devopsApi from './api/devops.api';
@@ -72,12 +68,9 @@ import {
 export default defineComponent({
   name: 'App',
   components: {
-    Menu,
-    Settings,
     Card,
     Message,
     Button,
-    Changelog,
   },
   setup: () => {
     const settings: Ref<SettingsModel> = ref(getSettings());

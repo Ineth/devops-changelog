@@ -53,7 +53,7 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Card from 'primevue/card';
-import { Settings } from '../models/Settings';
+import { Settings } from '@/models/Settings';
 
 export default defineComponent({
   name: 'Settings',

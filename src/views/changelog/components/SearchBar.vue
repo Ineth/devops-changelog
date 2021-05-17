@@ -33,13 +33,6 @@
             icon="pi pi-search"
           />
         </div>
-        <div>
-          <Button
-            @click="$emit('open-settings')"
-            icon="pi pi-cog"
-            label="Settings"
-          />
-        </div>
       </div>
 
       <div
@@ -103,7 +96,7 @@ import Card from 'primevue/card';
 import ProgressBar from 'primevue/progressbar';
 
 import { defineComponent, Ref, watch } from 'vue';
-import useDebouncedRef from '../../../composables/useDebouncedRef';
+import useDebouncedRef from '@/composables/useDebouncedRef';
 
 export default defineComponent({
   name: 'Menu',
@@ -122,12 +115,7 @@ export default defineComponent({
       default: undefined,
     },
   },
-  emits: [
-    'open-settings',
-    'search-workitems',
-    'from-build-id-changed',
-    'to-build-id-changed',
-  ],
+  emits: ['search-workitems', 'from-build-id-changed', 'to-build-id-changed'],
   components: {
     Menubar,
     InputText,

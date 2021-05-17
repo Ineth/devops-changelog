@@ -1,7 +1,11 @@
 <template>
   <Card>
     <template #content>
-      <div class="p-d-flex p-jc-end">
+      <div class="p-d-flex p-jc-between">
+        <div class="menu-items">
+          <Button class="p-m" label="Changelog" />
+          <Button label="Pull Requests" />
+        </div>
         <div>
           <Button
             @click="$emit('open-settings')"
@@ -36,3 +40,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.menu-items button {
+  margin-right: 0.5rem;
+}
+</style>
