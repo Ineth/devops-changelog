@@ -3,8 +3,10 @@
     <template #content>
       <div class="p-d-flex p-jc-between">
         <div class="menu-items">
-          <Button class="p-m" label="Changelog" />
-          <Button label="Pull Requests" />
+          <router-link to="/" class="p-button">Changelog</router-link>
+          <router-link to="/pull-requests" class="p-button"
+            >Pull Requests</router-link
+          >
         </div>
         <div>
           <Button
@@ -42,7 +44,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.menu-items button {
+.menu-items a {
   margin-right: 0.5rem;
+}
+
+.router-link-active {
+  background-color: var(--blue-500);
+  border-color: var(--blue-800);
+  box-shadow: none !important;
 }
 </style>

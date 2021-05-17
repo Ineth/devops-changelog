@@ -42,7 +42,7 @@
     </div>
 
     <div class="p-col-12">
-      <Changelog />
+      <router-view></router-view>
     </div>
   </div>
 </template>
