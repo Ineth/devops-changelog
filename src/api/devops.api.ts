@@ -1,5 +1,5 @@
 import base64 from 'base-64';
-import { DevopsSettings } from '../models/Settings';
+import { DevopsSettings } from '../../store/models/Settings';
 
 function createHeaders(apiKey: string) {
   const headers = new Headers();

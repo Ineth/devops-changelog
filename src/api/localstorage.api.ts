@@ -1,5 +1,5 @@
-import { SearchParams } from '../models/SearchParams';
-import { Settings } from '../models/Settings';
+import { SearchParams } from '@/models/SearchParams';
+import { Settings } from '@/store/models/Settings';
 
 const showWelcomeMessage = 'showWelcomeMessage';
 const searchParamsKey = 'searchParams';

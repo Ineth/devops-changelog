@@ -36,11 +36,7 @@
             icon="pi"
             @click="$emit('close-settings')"
           />
-          <Button
-            label="Save"
-            icon="pi pi-check"
-            @click="$emit('save-settings', settings)"
-          />
+          <Button label="Save" icon="pi pi-check" @click="saveSettings()" />
         </div>
       </div>
     </template>
@@ -53,7 +49,9 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Card from 'primevue/card';
-import { Settings } from '@/models/Settings';
+import { Settings } from '@/store/models/Settings';
+import { useStore } from '@/store';
+import { Mutations } from '@/store/mutations.enum';
 
 export default defineComponent({
   name: 'Settings',
@@ -67,10 +65,18 @@ export default defineComponent({
     Checkbox,
     Card,
   },
-  setup(props) {
-    const settings: Ref<Settings> = ref(props.settings as Settings);
+  setup() {
+    const store = useStore();
+    const settings: Ref<Settings> = ref(store.state.settings);
 
-    return { settings };
+    return { store, settings };
+  },
+  methods: {
+    saveSettings() {
+      console.log('saveSettings');
+      this.store.commit(Mutations.SET_SETTINGS, this.settings);
+      this.$emit('close-settings');
+    },
   },
 });
 </script>

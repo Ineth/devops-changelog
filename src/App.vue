@@ -33,11 +33,7 @@
 
     <div class="p-col-12" v-if="settingsVisible">
       <div class="p-d-flex p-jc-center">
-        <Settings
-          :settings="settings"
-          @close-settings="settingsVisible = false"
-          @save-settings="saveSettings($event)"
-        />
+        <Settings @close-settings="settingsVisible = false" />
       </div>
     </div>
 
@@ -53,7 +49,7 @@ import Message from 'primevue/message';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-import { Settings as SettingsModel } from './models/Settings';
+import { Settings as SettingsModel } from '@/store/models/Settings';
 import devopsApi from './api/devops.api';
 import { SearchParams } from './models/SearchParams';
 import {
@@ -64,6 +60,7 @@ import {
   saveSettings,
   saveShowWelcomeMessage,
 } from './api/localstorage.api';
+import { useStore } from './store';
 
 export default defineComponent({
   name: 'App',
@@ -73,7 +70,7 @@ export default defineComponent({
     Button,
   },
   setup: () => {
-    const settings: Ref<SettingsModel> = ref(getSettings());
+    const store = useStore();
     const searchParams: Ref<SearchParams> = ref(getSearchParams());
     const fromBuildIdDetails: Ref<any> = ref(undefined);
     const toBuildIdDetails: Ref<any> = ref(undefined);
@@ -85,7 +82,7 @@ export default defineComponent({
     const loading = ref(false);
 
     return {
-      settings,
+      store,
       searchParams,
       fromBuildIdDetails,
       toBuildIdDetails,
@@ -110,18 +107,11 @@ export default defineComponent({
       this.showWelcomeMessage = false;
       saveShowWelcomeMessage(this.showWelcomeMessage);
     },
-    saveSettings(settings: SettingsModel) {
-      this.settings = settings;
-      if (settings.saveToLocalStorage) {
-        saveSettings(settings);
-      }
-      this.settingsVisible = false;
-    },
     async getBuildDetails(buildId: string, from: boolean) {
       let details = undefined;
       try {
         const buildDetails = await devopsApi.getBuildById(
-          this.settings,
+          this.store.state.settings,
           buildId
         );
         details = {
@@ -149,7 +139,7 @@ export default defineComponent({
     async getWorkItems(searchParams: SearchParams) {
       this.errorMessage = '';
       this.searchParams = searchParams;
-      if (!this.settings.apiKey) {
+      if (!this.store.state.settings.apiKey) {
         this.errorMessage =
           'No API Key provided, please provide one in the settings.';
         return;
@@ -159,7 +149,7 @@ export default defineComponent({
       try {
         this.loading = true;
         this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(
-          this.settings,
+          this.store.state.settings,
           this.searchParams.fromBuildId,
           this.searchParams.toBuildId
         );

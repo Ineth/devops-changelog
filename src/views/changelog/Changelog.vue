@@ -28,7 +28,7 @@ import Message from 'primevue/message';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-import { Settings as SettingsModel } from '@/models/Settings';
+import { Settings as SettingsModel } from '@/store/models/Settings';
 import devopsApi from '@/api/devops.api';
 import { SearchParams } from '@/models/SearchParams';
 import {
