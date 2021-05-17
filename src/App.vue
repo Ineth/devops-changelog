@@ -1,13 +1,13 @@
 <template>
   <div class="p-grid">
     <div class="p-col-12">
-      <Menu @open-settings="settingsVisible = !settingsVisible" />
+      <Menu />
       <Message v-if="errorMessage" severity="error" :closable="false">{{
         errorMessage
       }}</Message>
     </div>
 
-    <div v-if="showWelcomeMessage" class="p-col-12">
+    <div v-if="!store.state.welcomeMessageShown" class="p-col-12">
       <Card>
         <template #title> Welcome </template>
         <template #content>
@@ -45,13 +45,9 @@ import Button from 'primevue/button';
 
 import devopsApi from './api/devops.api';
 import { SearchParams } from './models/SearchParams';
-import {
-  getSearchParams,
-  getShowWelcomeMessage,
-  saveSearchParams,
-  saveShowWelcomeMessage,
-} from './api/localstorage.api';
+import { getSearchParams, saveSearchParams } from './api/localstorage.api';
 import { useStore } from './store';
+import { Mutations } from './store/mutations.enum';
 
 export default defineComponent({
   name: 'App',
@@ -65,9 +61,7 @@ export default defineComponent({
     const searchParams: Ref<SearchParams> = ref(getSearchParams());
     const fromBuildIdDetails: Ref<any> = ref(undefined);
     const toBuildIdDetails: Ref<any> = ref(undefined);
-    const showWelcomeMessage = ref(getShowWelcomeMessage());
 
-    const settingsVisible = ref(false);
     const workItemList = ref(undefined);
     const errorMessage = ref('');
     const loading = ref(false);
@@ -78,10 +72,8 @@ export default defineComponent({
       fromBuildIdDetails,
       toBuildIdDetails,
       workItemList,
-      settingsVisible,
       errorMessage,
       loading,
-      showWelcomeMessage,
     };
   },
   mounted() {
@@ -95,8 +87,7 @@ export default defineComponent({
   },
   methods: {
     closeWelcomeMessage() {
-      this.showWelcomeMessage = false;
-      saveShowWelcomeMessage(this.showWelcomeMessage);
+      this.store.commit(Mutations.SET_WELCOME_MESSAGE_SHOWN);
     },
     async getBuildDetails(buildId: string, from: boolean) {
       let details = undefined;

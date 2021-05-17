@@ -10,6 +10,7 @@ import createPersistedState from 'vuex-persistedstate';
 import { Mutations } from './mutations.enum';
 
 export interface State {
+  welcomeMessageShown: boolean;
   settings: Settings;
 }
 
@@ -17,6 +18,7 @@ export const key: InjectionKey<Store<State>> = Symbol();
 
 export const store = createStore<State>({
   state: {
+    welcomeMessageShown: false,
     settings: {
       apiKey: '',
       organization: '',
@@ -26,6 +28,9 @@ export const store = createStore<State>({
   mutations: {
     [Mutations.SET_SETTINGS](state, settings: Settings) {
       state.settings = settings;
+    },
+    [Mutations.SET_WELCOME_MESSAGE_SHOWN](state) {
+      state.welcomeMessageShown = true;
     },
   },
   plugins: [createLogger(), createPersistedState()],
