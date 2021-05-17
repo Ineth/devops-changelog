@@ -1,6 +1,6 @@
 import { ref, customRef } from 'vue';
 
-const debounce = (fn: any, delay = 0, immediate = false) => {
+export const debounce = (fn: any, delay = 0, immediate = false) => {
   let timeout: any;
   return (...args: any[]) => {
     if (immediate && !timeout) fn(...args);

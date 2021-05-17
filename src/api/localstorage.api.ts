@@ -1,4 +1,4 @@
-import { SearchParams } from '@/models/SearchParams';
+import { SearchParams } from '@/store/models/Changelog';
 import { Settings } from '@/store/models/Settings';
 
 const showWelcomeMessage = 'showWelcomeMessage';

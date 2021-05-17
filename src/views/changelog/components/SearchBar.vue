@@ -95,8 +95,11 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import ProgressBar from 'primevue/progressbar';
 
-import { defineComponent, Ref, watch } from 'vue';
-import useDebouncedRef from '@/composables/useDebouncedRef';
+import { computed, defineComponent, Ref, watch } from 'vue';
+import useDebouncedRef, { debounce } from '@/composables/useDebouncedRef';
+import { useStore } from '@/store';
+import { Actions } from '@/store/actions.enum';
+import { SearchParams } from '@/store/models/Changelog';
 
 export default defineComponent({
   name: 'Menu',
@@ -124,24 +127,50 @@ export default defineComponent({
     ProgressBar,
   },
   setup(props, context) {
-    const fromBuildId: Ref<string> = useDebouncedRef<string>(
-      props.searchParams?.fromBuildId,
-      400
-    );
-    const toBuildId: Ref<string> = useDebouncedRef<string>(
-      props.searchParams?.toBuildId,
-      400
-    );
+    const store = useStore();
+    // const fromBuildId: Ref<string> = useDebouncedRef<string>(
+    //   props.searchParams?.fromBuildId,
+    //   400
+    // );
+    // const toBuildId: Ref<string> = useDebouncedRef<string>(
+    //   props.searchParams?.toBuildId,
+    //   400
+    // );
 
-    watch(fromBuildId, (newFromBuildId) => {
-      context.emit('from-build-id-changed', newFromBuildId);
-    });
+    // watch(fromBuildId, (newFromBuildId) => {
+    //   context.emit('from-build-id-changed', newFromBuildId);
+    // });
 
-    watch(toBuildId, (newtoBuildId) => {
-      context.emit('to-build-id-changed', newtoBuildId);
-    });
+    // watch(toBuildId, (newtoBuildId) => {
+    //   context.emit('to-build-id-changed', newtoBuildId);
+    // });
 
-    return { fromBuildId, toBuildId };
+    // return { fromBuildId: computed(()), toBuildId };
+    return { store };
+  },
+  computed: {
+    fromBuildId: {
+      get() {
+        this.store.state.changelog.searchParams?.fromBuildId;
+      },
+      set(value: any) {
+        console.log('set ~ value', value);
+        this.store.dispatch(Actions.UPDATE_SEARCH_PARAMS, {
+          fromBuildId: value,
+        } as SearchParams);
+      },
+    },
+    toBuildId: {
+      get() {
+        this.store.state.changelog.searchParams?.toBuildId;
+      },
+      set: debounce(function (value: any) {
+        console.log('set ~ value', value);
+        this.store.dispatch(Actions.UPDATE_SEARCH_PARAMS, {
+          toBuildId: value,
+        } as SearchParams);
+      }, 400),
+    },
   },
 });
 </script>

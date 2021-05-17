@@ -1,44 +1,35 @@
 <template>
   <div class="p-grid">
     <div class="p-col-12">
-      <SearchBar
-        :searchParams="searchParams"
+      <SearchBar />
+      <!-- :searchParams="searchParams"
         :loading="loading"
-        :fromBuildIdDetails="fromBuildIdDetails"
-        :toBuildIdDetails="toBuildIdDetails"
-        @open-settings="settingsVisible = !settingsVisible"
+        :fromBuildIdDetails="buildDetails?.from"
+        :toBuildIdDetails="buildDetails?.to"
         @search-workitems="getWorkItems($event)"
         @from-build-id-changed="getBuildDetails($event, true)"
-        @to-build-id-changed="getBuildDetails($event, false)"
-      />
+        @to-build-id-changed="getBuildDetails($event, false)" -->
       <Message v-if="errorMessage" severity="error" :closable="false">{{
         errorMessage
       }}</Message>
     </div>
 
     <div class="p-col-12">
-      <WorkItemTable :work-items="workItemList" />
+      <WorkItemTable :work-items="workItems" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import Message from 'primevue/message';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 
-import { Settings as SettingsModel } from '@/store/models/Settings';
 import devopsApi from '@/api/devops.api';
-import { SearchParams } from '@/models/SearchParams';
-import {
-  getSearchParams,
-  getSettings,
-  getShowWelcomeMessage,
-  saveSearchParams,
-  saveSettings,
-  saveShowWelcomeMessage,
-} from '@/api/localstorage.api';
+import { SearchParams } from '@/store/models/Changelog';
+import { useStore } from '@/store';
+import { Mutations } from '@/store/mutations.enum';
 
 export default defineComponent({
   name: 'Changelog',
@@ -48,30 +39,21 @@ export default defineComponent({
     Button,
   },
   setup: () => {
-    const settings: Ref<SettingsModel> = ref(getSettings());
-    const searchParams: Ref<SearchParams> = ref(getSearchParams());
-    const fromBuildIdDetails: Ref<any> = ref(undefined);
-    const toBuildIdDetails: Ref<any> = ref(undefined);
-    const showWelcomeMessage = ref(getShowWelcomeMessage());
-
-    const settingsVisible = ref(false);
-    const workItemList = ref(undefined);
+    const store = useStore();
     const errorMessage = ref('');
     const loading = ref(false);
 
     return {
-      settings,
-      searchParams,
-      fromBuildIdDetails,
-      toBuildIdDetails,
-      workItemList,
-      settingsVisible,
+      store,
+      searchParams: computed(() => store.state.changelog.searchParams),
+      buildDetails: computed(() => store.state.changelog.buildDetails),
+      workItems: computed(() => store.state.changelog.workItems),
       errorMessage,
       loading,
-      showWelcomeMessage,
     };
   },
   mounted() {
+    // TODO: possible side effect for the store ?
     if (this.searchParams?.fromBuildId) {
       this.getBuildDetails(this.searchParams.fromBuildId, true);
     }
@@ -81,22 +63,11 @@ export default defineComponent({
     }
   },
   methods: {
-    closeWelcomeMessage() {
-      this.showWelcomeMessage = false;
-      saveShowWelcomeMessage(this.showWelcomeMessage);
-    },
-    saveSettings(settings: SettingsModel) {
-      this.settings = settings;
-      if (settings.saveToLocalStorage) {
-        saveSettings(settings);
-      }
-      this.settingsVisible = false;
-    },
     async getBuildDetails(buildId: string, from: boolean) {
       let details = undefined;
       try {
         const buildDetails = await devopsApi.getBuildById(
-          this.settings,
+          this.store.state.settings,
           buildId
         );
         details = {
@@ -116,21 +87,24 @@ export default defineComponent({
       }
 
       if (from) {
-        this.fromBuildIdDetails = details;
+        this.store.commit(Mutations.UPDATE_CHANGELOG_BUILD_DETAILS, {
+          from: buildId,
+        });
       } else {
-        this.toBuildIdDetails = details;
+        this.store.commit(Mutations.UPDATE_CHANGELOG_BUILD_DETAILS, {
+          to: buildId,
+        });
       }
     },
     async getWorkItems(searchParams: SearchParams) {
       this.errorMessage = '';
       this.searchParams = searchParams;
-      if (!this.settings.apiKey) {
+      if (!this.store.state.settings.apiKey) {
         this.errorMessage =
           'No API Key provided, please provide one in the settings.';
         return;
       }
 
-      saveSearchParams(searchParams);
       try {
         this.loading = true;
         this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(

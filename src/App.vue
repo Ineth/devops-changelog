@@ -76,70 +76,9 @@ export default defineComponent({
       loading,
     };
   },
-  mounted() {
-    if (this.searchParams?.fromBuildId) {
-      this.getBuildDetails(this.searchParams.fromBuildId, true);
-    }
-
-    if (this.searchParams?.toBuildId) {
-      this.getBuildDetails(this.searchParams.toBuildId, false);
-    }
-  },
   methods: {
     closeWelcomeMessage() {
       this.store.commit(Mutations.SET_WELCOME_MESSAGE_SHOWN);
-    },
-    async getBuildDetails(buildId: string, from: boolean) {
-      let details = undefined;
-      try {
-        const buildDetails = await devopsApi.getBuildById(
-          this.store.state.settings,
-          buildId
-        );
-        details = {
-          link: buildDetails._links.web.href,
-          buildNumber: buildDetails.buildNumber,
-          pipeline: {
-            name: buildDetails.definition.name,
-            link: buildDetails.definition.url,
-          },
-          repo: {
-            name: buildDetails.repository.name,
-            link: buildDetails.repository.url,
-          },
-        };
-      } catch {
-        details = null;
-      }
-
-      if (from) {
-        this.fromBuildIdDetails = details;
-      } else {
-        this.toBuildIdDetails = details;
-      }
-    },
-    async getWorkItems(searchParams: SearchParams) {
-      this.errorMessage = '';
-      this.searchParams = searchParams;
-      if (!this.store.state.settings.apiKey) {
-        this.errorMessage =
-          'No API Key provided, please provide one in the settings.';
-        return;
-      }
-
-      saveSearchParams(searchParams);
-      try {
-        this.loading = true;
-        this.workItemList = await devopsApi.getWorkItemsBetweenBuilds(
-          this.store.state.settings,
-          this.searchParams.fromBuildId,
-          this.searchParams.toBuildId
-        );
-      } catch (error) {
-        this.errorMessage = `Unable to fetch results: ${error}`;
-      } finally {
-        this.loading = false;
-      }
     },
   },
 });
