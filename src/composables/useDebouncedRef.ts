@@ -1,8 +1,8 @@
 import { ref, customRef } from 'vue';
 
-export const debounce = (fn: any, delay = 0, immediate = false) => {
+export function debounce(fn: any, delay = 0, immediate = false) {
   let timeout: any;
-  return (...args: any[]) => {
+  return function (...args: any[]) {
     if (immediate && !timeout) fn(...args);
     clearTimeout(timeout);
 
@@ -10,7 +10,7 @@ export const debounce = (fn: any, delay = 0, immediate = false) => {
       fn(...args);
     }, delay);
   };
-};
+}
 
 function useDebouncedRef<T>(initialValue: T, delay: number, immediate = false) {
   const state = ref<T>(initialValue);
